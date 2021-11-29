@@ -21,8 +21,7 @@ export default {
   data() {
     return {
       filterText: '',
-      data2: [     //返回所有空的分类数据
-      ],
+      data2: [],  // 返回所有空的分类数据
       defaultProps: {
         children: 'children',
         label: 'title'
@@ -39,12 +38,11 @@ export default {
  },
   methods: {
       getallSubjectList(){
-          subject.getSubjectList()
-          .then(response=>{
+          subject.getSubjectList().then(response=>{
               this.data2=response.data.list
           })
       },
-
+    // 搜索过滤
     filterNode(value, data) {
       if (!value) return true
       return data.title.toLowerCase().indexOf(value.toLowerCase()) !== -1       //变成小写比较

@@ -54,7 +54,7 @@ export const constantRoutes = [
       meta: { title: 'Dashboard', icon: 'dashboard' }
     }]
   },
-  // 讲师管理
+  // 讲师管理 
   {
     path: '/teacher',
     component: Layout,

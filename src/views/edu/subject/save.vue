@@ -47,23 +47,26 @@ export default {
   },
   created() {},
   methods: {
+    // 点击按钮上传文件到接口里面
     submitUpload() {
       this.importBtnDisabled = true;
       this.loading = true;
       this.$refs.upload.submit();
     },
-
+    // 上传成功
     fileUploadSuccess(response) {
+      console.log('response',response)
       if (response.success === true) {
         this.loading = false;
         this.$message({
           type: "success",
           message: "添加课程分类成功"
         });
-                //回到列表页面，路由跳转
+        //回到列表页面，路由跳转
         this.$router.push({ path: "/subject/list" });
       }
     },
+    // 上传失败
     fileUploadError(response) {
       this.loading = false;
       this.$message({
