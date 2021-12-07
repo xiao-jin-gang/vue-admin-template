@@ -41,6 +41,13 @@ export default{
             method: 'post',
             data: teacher
         })
+    },
+    // 查询讲师列表Id&Name
+    getTeacherIdName(){
+        return request({
+            url:`${baseUrl}/eduservice/teacher/getTeacherIdName`,
+            method:'get'
+        })
     }
 
 }

@@ -100,22 +100,51 @@ export default {
                 cover: '',
                 price: 0
             },
+            courseId:'',
             BASE_API: `${baseUrl}`, // 接口API地址
             teacherList:[],//封装所有的讲师
-            subjectOneList:[],//一级分类
-            subjectTwoList:[]//二级分类
+            subjectOneList:[],  //一级分类
+            subjectTwoList:[]   //二级分类
         }
     },
     created() {
-        this.getTeacherList()
-        this.getOneSubject()
-        this.courseInfo.cover = pic
+        if(this.$route.params && this.$route.params.id){
+            //回显操作
+            this.courseId = this.$route.params.id
+            this.getCourseInfoById();
+        }else{
+            this.courseInfoClear()
+            //添加操作
+            this.getTeacherList()   //获取教师列表
+            this.getOneSubject()    //一级分类
+            this.courseInfo.cover = pic //图片信息
+        }
     }, 
     methods:{
+        //在页面获取数据回显 根据id查询课程信息
+        getCourseInfoById() {
+            course.getCourseInfoById(this.courseId).then(res=>{
+                //courseInfo会有课程基本信息，包含一级分类id和二级分类id
+                this.courseInfo = res.data.courseInfoVo
+                //查询所有分类，包含一级和二级 
+                subject.getSubjectList().then(res=>{
+                    //获取所有一级分类
+                    this.subjectOneList = res.data.list
+                    //3把所有一级分类数组进行遍历，比较当前courseInfo里面一级分类id和所有的一级分类id
+                    for(var i = 0; i < this.subjectOneList.length; i++){
+                        if(this.courseInfo.subjectParentId === this.subjectOneList[i].id){
+                            //获取一级分类所有的二级分类
+                            this.subjectTwoList = this.subjectOneList[i].children
+                        }
+                    }
+                })
+                //初始话所有讲师
+                 this.getTeacherList()
+            })
+        },
         //上传成功调用的方法
         handleAvatarSuccess(res, file) {
             this.courseInfo.cover = res.data.url
-            console.log(this.courseInfo.cover)
         },
         //上传之前调用的方法
         beforeAvatarUpload(file) {
@@ -153,8 +182,18 @@ export default {
                 }
             }
         },
-        //提交表单
+        //保存进入下一页
         saveOrUpdate(){
+            if(this.courseInfo.id){
+                //修改
+                this.updateCourseInfo()
+            }
+            else {
+                this.addCourseInfo()
+            }
+        },
+        //提交表单
+        addCourseInfo(){
             course.addCourseInfo(this.courseInfo).then(response=>{
                 this.$message({
                     type:'success',
@@ -162,8 +201,28 @@ export default {
                 })
             //跳转到第二步
             this.$router.push({path:'/course/chapter/'+response.data.courseId})
+            })            
+        },
+        //修改课程信息 不会返回课程id
+        updateCourseInfo() {
+            course.updateCourseInfo(this.courseInfo).then(res=>{
+                this.$message({
+                    type:'success',
+                    message:'修改课程信息成功！'
+                })
+                this.$router.push({path:'/course/chapter/'+this.courseId})
             })
-            
+        },
+        //清除课程信息
+        courseInfoClear() {
+            this.courseInfo.title='',
+            this.courseInfo.subjectId='',
+            this.courseInfo.subjectParentId='',
+            this.courseInfo.teacherId='',
+            this.courseInfo.lessonNum=0,
+            this.courseInfo.description='',
+            this.courseInfo.cover='',
+            this.courseInfo.price= 0            
         }
     }
 }
