@@ -60,4 +60,11 @@ export default {
             data: courseQuery
         })
     },
+    //删除课程章节小节视频
+    deleteCourse(courseId) {
+        return request({
+            url:`${baseUrl}/eduservice/course/${courseId}`,
+            method:'delete',
+        })
+    }
 }

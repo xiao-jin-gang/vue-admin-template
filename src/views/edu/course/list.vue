@@ -71,7 +71,7 @@
             <router-link :to="'/edu/course/chapter/'+scope.row.id">    
                 <el-button type="text" size="mini" icon="el-icon-edit">编辑课程大纲</el-button>
             </router-link> 
-                <el-button type="text" size="mini" icon="el-icon-delete">删除</el-button>
+                <el-button type="text" size="mini" icon="el-icon-delete" @click="deleteByCourseId(scope.row.id)">删除</el-button>
         </template>
      </el-table-column>
     </el-table>
@@ -109,8 +109,35 @@ export default {
     this.getCourseListByQuery();
   },
   methods: {
+    //删除课程章节小节
+    deleteByCourseId(courseId) {
+        this.$confirm("此操作将永久删除该记录, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          return course.deleteCourse(courseId);
+        })
+        .then(() => {
+          this.getCourseListByQuery(); // 刷新列表
+          this.$message({
+            type: "success",
+            message: "删除成功!",
+          });
+        })
+        .catch((response) => {
+          // 失败
+          if (response === "cancel") {
+            this.$message({
+              type: "info",
+              message: "已取消删除",
+            });
+          }
+        });
+    },
     courseQueryBtn() {
-          this.getCourseListByQuery()
+        this.getCourseListByQuery()
     },
     //获取课程列表
     getCourseList() {
