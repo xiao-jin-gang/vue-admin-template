@@ -241,6 +241,7 @@ export default {
       this.video.free = 0
       this.video.videoSourceId = ""
       this.video.videoOriginalName = ""
+      this.fileList = []
     },
     //添加小节 确认键
     addVideo() {
